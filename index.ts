@@ -7,5 +7,5 @@ server.getApp().use(cors({origin:true, credentials:true}))
 server.getApp().use(router)
 
 server.start(() => {
-    console.log(`Servidor corriendo en el puerto ${server.getPort()}`)
+  console.log(`Servidor corriendo en el puerto ${server.getPort()}`)
 })

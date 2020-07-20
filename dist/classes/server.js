@@ -2,13 +2,22 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = __importDefault(require("express"));
-var environment_1 = require("../global/environment");
-var socket_io_1 = __importDefault(require("socket.io"));
-var http_1 = __importDefault(require("http"));
-var Server = /** @class */ (function () {
-    function Server() {
+const express_1 = __importDefault(require("express"));
+const environment_1 = require("../global/environment");
+const socket_io_1 = __importDefault(require("socket.io"));
+const http_1 = __importDefault(require("http"));
+const chalk_1 = __importDefault(require("chalk"));
+const socket = __importStar(require("../sockets/sockets"));
+class Server {
+    constructor() {
         this.app = express_1.default();
         this.app.use(express_1.default.json());
         this.PORT = environment_1.SERVER_PORT;
@@ -16,27 +25,24 @@ var Server = /** @class */ (function () {
         this.io = socket_io_1.default(this.httpServer);
         this.escucharSocket();
     }
-    Server.prototype.start = function (callback) {
+    start(callback) {
         this.httpServer.listen(this.getPort(), callback);
-    };
-    Server.prototype.getPort = function () {
+    }
+    getPort() {
         return this.PORT;
-    };
-    Server.prototype.getApp = function () {
+    }
+    getApp() {
         return this.app;
-    };
-    Object.defineProperty(Server, "instance", {
-        get: function () {
-            return this._instance || (this._instance = new this());
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Server.prototype.escucharSocket = function () {
-        this.io.on('mensaje', function (cliente) {
-            console.log('Nuevo cliente conectado', cliente);
+    }
+    static get instance() {
+        return this._instance || (this._instance = new this());
+    }
+    escucharSocket() {
+        this.io.on("connection", (cliente) => {
+            console.log(chalk_1.default.green.bold("Nuevo cliente conectado"));
+            socket.message(cliente);
+            socket.disconnect(cliente);
         });
-    };
-    return Server;
-}());
+    }
+}
 exports.default = Server;
