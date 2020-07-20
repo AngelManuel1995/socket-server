@@ -10,10 +10,21 @@ var http_1 = __importDefault(require("http"));
 var Server = /** @class */ (function () {
     function Server() {
         this.app = express_1.default();
-        this.port = environment_1.SERVER_PORT;
-        this.httpServer = new http_1.default.Server(this.app);
+        this.app.use(express_1.default.json());
+        this.PORT = environment_1.SERVER_PORT;
+        this.httpServer = new http_1.default.Server(this.getApp());
         this.io = socket_io_1.default(this.httpServer);
+        this.escucharSocket();
     }
+    Server.prototype.start = function (callback) {
+        this.httpServer.listen(this.getPort(), callback);
+    };
+    Server.prototype.getPort = function () {
+        return this.PORT;
+    };
+    Server.prototype.getApp = function () {
+        return this.app;
+    };
     Object.defineProperty(Server, "instance", {
         get: function () {
             return this._instance || (this._instance = new this());
@@ -21,14 +32,10 @@ var Server = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Server.prototype.escucharSockets = function () {
-        console.log('Escuchando conexiones');
-        this.io.on('connection', function (cliente) {
-            console.log('Cliente conectado');
+    Server.prototype.escucharSocket = function () {
+        this.io.on('mensaje', function (cliente) {
+            console.log('Nuevo cliente conectado', cliente);
         });
-    };
-    Server.prototype.start = function (callback) {
-        this.app.listen(this.port, callback);
     };
     return Server;
 }());
