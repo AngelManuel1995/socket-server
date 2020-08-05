@@ -40,7 +40,7 @@ class Server {
     escucharSocket() {
         this.io.on("connection", (cliente) => {
             console.log(chalk_1.default.green.bold("Nuevo cliente conectado"));
-            socket.message(cliente);
+            socket.message(cliente, this.io);
             socket.disconnect(cliente);
         });
     }

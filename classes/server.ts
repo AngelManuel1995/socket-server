@@ -39,7 +39,7 @@ export default class Server {
   private escucharSocket() {
     this.io.on("connection", (cliente: any) => {
 			console.log(chalk.green.bold("Nuevo cliente conectado"));
-			socket.message(cliente)
+			socket.message(cliente, this.io)
       socket.disconnect(cliente)
     });
   }
